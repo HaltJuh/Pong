@@ -17,7 +17,7 @@ bool init()
 	}
 	else
 	{
-		SDL_CreateWindowAndRenderer(SCREEN_WIDTH, SCREEN_WIDTH, 0, &window, &renderer);
+		SDL_CreateWindowAndRenderer(SCREEN_WIDTH, SCREEN_HEIGHT, 0, &window, &renderer);
 		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // for testing; will have to alternate between black and white later
 		if (window == NULL)
 		{

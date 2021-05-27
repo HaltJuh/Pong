@@ -2,24 +2,6 @@
 #include "ball.h"
 #include <SDL.h>
 #include <iostream>
-//You here?
-//Should we try running it now?
-//Didn't work, getting a bunch of errors
-//It's in ball.h
-//Looks like it can't use any of the SDL stuff
-//It shouldn't be able to find the SDL stuff if they weren't setup, right?
-//Ah, I might have forgotten a step
-
-//okay, that was annoying. But it opens now.
-
-
-//there's no draw call yet. Oh there is. Lol.
-// yeah, seeing them here too. LiveShare is pretty cool
-// ah, SDL isn't included in Ball
-// was this project set up to work with SDL?
-
-// only 2 errors
-// nice
 
 SDL_Window* window = NULL;
 SDL_Surface* surface = NULL;

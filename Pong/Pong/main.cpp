@@ -93,11 +93,14 @@ int main(int argc, char* args[])
 				
 				//You think this is a good point to stop for today, it's getting pretty late again.
 				//Should we leave these comments, so we know where to continue tommorow?
+				//I updated the git repo
 				// sure
 				// yeah. 
+				// try building it tho, let's try not to stop at a failed build
 				
 				// they'll be separate events. (of course, our function will ignore events where irrelevant keys are pressed)
 				// still here?
+				
 
 				// It won't be needed, yeah. (if we go with onKeyPress)
 				// I'll comment out the code above for now.
@@ -112,7 +115,6 @@ int main(int argc, char* args[])
 				//}
 			}
 		}
-		std::cout << input << "\n";
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 		SDL_RenderClear(renderer);
 		ball.update(deltatime);

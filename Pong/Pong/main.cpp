@@ -49,6 +49,7 @@ void close()
 int main(int argc, char* args[])
 {
 	bool quit = false;
+	bool keyHeld = false;
 	SDL_Event e;
 	if(!init())
 	{
@@ -60,7 +61,7 @@ int main(int argc, char* args[])
 	}
 
 	Ball ball;
-	Paddle paddle;
+	Paddle paddle(10);
 	
 	auto prevTime = std::chrono::high_resolution_clock::now();
 
@@ -69,57 +70,41 @@ int main(int argc, char* args[])
 		auto currentTime = std::chrono::high_resolution_clock::now();
 		double deltatime = std::chrono::duration<double, std::chrono::milliseconds::period>(currentTime - prevTime).count();
 		int input = 0;
+
+		// handle events
 		while (SDL_PollEvent(&e) != 0)
 		{
 			if (e.type == SDL_QUIT)
 			{
 				quit = true;
 			}
-			else if (e.type == SDL_KEYDOWN)
+			else if (e.type == SDL_KEYDOWN && !keyHeld)
 			{
-				//if (e.key.keysym.sym == SDLK_w)
-				//{
-				//	input = 1;
-				//}
-				//else if (e.key.keysym.sym == SDLK_s)
-				//{
-				//	input = -1;
-				//}
-
-				// I have an idea
-				// let's put an "onKeyPress" function on paddle, which takes the input.
-				// we'll call that function in here by passing "e.key.keysym.sym"
-				// then we'll let the paddle decide what it will do depending on the input. yea, go ahead
-				
-				//You think this is a good point to stop for today, it's getting pretty late again.
-				//Should we leave these comments, so we know where to continue tommorow?
-				//I updated the git repo
-				// sure
-				// yeah. 
-				// try building it tho, let's try not to stop at a failed build
-				
-				// they'll be separate events. (of course, our function will ignore events where irrelevant keys are pressed)
-				// still here?
-				
-
-				// It won't be needed, yeah. (if we go with onKeyPress)
-				// I'll comment out the code above for now.
-				
-				// Okay, so here, we can do:
-				paddle.onKeyPress(e.key.keysym.sym); // keypress won't need deltatime; the update comes later
-
-				// and then inside ball.cpp, ball.keyPress would look something like:
-				//void Ball::onKeypress(SDL_Keysym sym)
-				//{
-					// change direction based on what "sym" is
-				//}
+				keyHeld = true;
+				paddle.onKeyPress(e.key.keysym.sym);
+			}
+			else if (e.type == SDL_KEYUP)
+			{
+				keyHeld = false;
+				paddle.onKeyRelease(e.key.keysym.sym);
 			}
 		}
+		//It might need a check for s and w, as now pressing/releasing any key will trigger the changes
+
+
+		// clear screen
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 		SDL_RenderClear(renderer);
-		ball.update(deltatime);
 		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+
+		// update game entities
+		ball.update(deltatime);
+		paddle.update(deltatime);
+		
+		// draw game entities
 		ball.drawBall(renderer);
+		paddle.drawPaddle(renderer);
+		SDL_RenderPresent(renderer);
 
 		prevTime = std::chrono::high_resolution_clock::now();
 	}

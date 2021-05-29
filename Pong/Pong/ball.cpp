@@ -4,6 +4,7 @@ Ball::Ball()
 {
 	_coord = { ((SCREEN_WIDTH - _size[0]) * 0.5),((SCREEN_HEIGHT - _size[1]) * 0.5) };
 	_velocity = { -1.0 * _speed, 0.0 };
+	rect = { (int)(_coord[0]), (int)(_coord[1]), _size[0], _size[1] };
 }
 Ball::~Ball()
 {
@@ -16,10 +17,12 @@ void Ball::reset()
 }
 void Ball::drawBall(SDL_Renderer* renderer)
 {
-
-	rect = { (int)(_coord[0]), (int)(_coord[1]), _size[0], _size[1] };
+	rect.x = (int)_coord[0];
+	rect.y = (int)_coord[1];
+	
 	SDL_RenderFillRect(renderer, &rect);
-	SDL_RenderPresent(renderer);
+
+	
 }
 void Ball::move()
 {

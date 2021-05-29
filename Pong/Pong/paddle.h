@@ -15,7 +15,9 @@ public:
 	void onKeyRelease(SDL_Keycode key);
 private:
 	SDL_Rect rect;
-	double _velocity = 0; // implied to be on y axis
+	double _speed = 1000;
 	std::vector<double> _coord = {0,0};
 	std::vector<int> _size{ 20,100 };
+	bool upKeyHeld = false;
+	bool downKeyHeld = false;
 };

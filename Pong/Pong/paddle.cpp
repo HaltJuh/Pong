@@ -17,34 +17,29 @@
 		rect.y = (int)_coord[1];
 		SDL_RenderFillRect(renderer, &rect);
 	}
+	
 	void Paddle::update(double deltatime)
 	{
-		//It crashed
-		//Yeah, it gives me an "vector subscript out of range" error
-		//Log? ah okay. I swapped the directions around, now to figure out why they get stuck. I was thinking of printing the coords first
-		//To see if they start changing immeadietly
-		//Yeah the coordinates are stuck, maybe it's the speed
-		//Found the problem, once the paddle hits the top/bottom, the velocity skyrockets and it takes a bit for it to return
-		//Duct tape fix would be to clamp velocity, but we should probably find out why it skyrockets.
-		//Should we print like a message everytime a key is pressed down?
-		
-		// was referring to error log
-		// okay, try that
-		// hmmmm
-		// go ahead, drawing blanks what's causing it :v
-		_coord[1] += (_velocity * deltatime);
+		if (upKeyHeld)
+		{
+			_coord[1] -= (_speed * deltatime);
+		}
+		else if (downKeyHeld)
+		{
+			_coord[1] += (_speed * deltatime);
+		}
 		_coord[1] = std::clamp(_coord[1], 0.0, (double)(SCREEN_HEIGHT-_size[1]));
 	}
 	void Paddle::onKeyPress(SDL_Keycode key)
 	{
 		std::cout << "Key pressed down\n";
-		if (key == SDLK_w)
+		if (key == SDLK_w && !downKeyHeld)
 		{
-			_velocity -= 1000;
+			upKeyHeld = true;
 		}
-		else if (key == SDLK_s)
+		else if (key == SDLK_s && !upKeyHeld)
 		{
-			_velocity += 1000;
+			downKeyHeld = true;
 		}
 	}
 
@@ -53,10 +48,10 @@
 		std::cout << "Key released\n";
 		if (key == SDLK_w)
 		{
-			_velocity += 1000;
+			upKeyHeld = false;
 		}
 		else if (key == SDLK_s)
 		{
-			_velocity -= 1000;
+			downKeyHeld = false;
 		}
 	}

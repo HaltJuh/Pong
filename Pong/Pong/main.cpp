@@ -49,7 +49,6 @@ void close()
 int main(int argc, char* args[])
 {
 	bool quit = false;
-	bool keyHeld = false;
 	SDL_Event e;
 	if(!init())
 	{
@@ -78,18 +77,15 @@ int main(int argc, char* args[])
 			{
 				quit = true;
 			}
-			else if (e.type == SDL_KEYDOWN && !keyHeld)
+			else if (e.type == SDL_KEYDOWN)
 			{
-				keyHeld = true;
 				paddle.onKeyPress(e.key.keysym.sym);
 			}
 			else if (e.type == SDL_KEYUP)
 			{
-				keyHeld = false;
 				paddle.onKeyRelease(e.key.keysym.sym);
 			}
 		}
-		//It might need a check for s and w, as now pressing/releasing any key will trigger the changes
 
 
 		// clear screen

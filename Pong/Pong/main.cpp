@@ -59,9 +59,11 @@ int main(int argc, char* args[])
 		SDL_UpdateWindowSurface(window);
 	}
 
-	Ball ball;
-	Paddle paddle(10);
 	
+	Paddle paddle1(10, SDLK_w, SDLK_s);
+	Paddle paddle2(930, SDLK_UP, SDLK_DOWN);
+	Ball ball(paddle1.getRect(), paddle2.getRect());
+
 	auto prevTime = std::chrono::high_resolution_clock::now();
 
 	while (!quit)
@@ -79,14 +81,15 @@ int main(int argc, char* args[])
 			}
 			else if (e.type == SDL_KEYDOWN)
 			{
-				paddle.onKeyPress(e.key.keysym.sym);
+				paddle1.onKeyPress(e.key.keysym.sym);
+				paddle2.onKeyPress(e.key.keysym.sym);
 			}
 			else if (e.type == SDL_KEYUP)
 			{
-				paddle.onKeyRelease(e.key.keysym.sym);
+				paddle1.onKeyRelease(e.key.keysym.sym);
+				paddle2.onKeyRelease(e.key.keysym.sym);
 			}
 		}
-
 
 		// clear screen
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
@@ -95,11 +98,13 @@ int main(int argc, char* args[])
 
 		// update game entities
 		ball.update(deltatime);
-		paddle.update(deltatime);
-		
+		paddle1.update(deltatime);
+		paddle2.update(deltatime);
+
 		// draw game entities
 		ball.drawBall(renderer);
-		paddle.drawPaddle(renderer);
+		paddle1.drawPaddle(renderer);
+		paddle2.drawPaddle(renderer);
 		SDL_RenderPresent(renderer);
 
 		prevTime = std::chrono::high_resolution_clock::now();

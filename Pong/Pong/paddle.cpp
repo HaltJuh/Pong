@@ -2,11 +2,14 @@
 #include <algorithm>
 #include <iostream>
 
-	Paddle::Paddle(int x)
+
+	Paddle::Paddle(int x, SDL_KeyCode up, SDL_KeyCode down)
 	{
 		_coord[0] = x;
-		_coord[1] = ((SCREEN_HEIGHT - _size[1]) * 0.5);
+		_coord[1] = (((double)(SCREEN_HEIGHT) - _size[1]) * 0.5);
 		rect = { (int)_coord[0], (int)_coord[1], _size[0], _size[1] };
+		_upKey = up;
+		_downKey = down;
 	}
 	Paddle::~Paddle()
 	{
@@ -28,16 +31,16 @@
 		{
 			_coord[1] += (_speed * deltatime);
 		}
-		_coord[1] = std::clamp(_coord[1], 0.0, (double)(SCREEN_HEIGHT-_size[1]));
+		_coord[1] = std::clamp(_coord[1], 0.0, (double)((double)SCREEN_HEIGHT-_size[1]));
 	}
 	void Paddle::onKeyPress(SDL_Keycode key)
 	{
 		std::cout << "Key pressed down\n";
-		if (key == SDLK_w && !downKeyHeld)
+		if (key == _upKey && !downKeyHeld)
 		{
 			upKeyHeld = true;
 		}
-		else if (key == SDLK_s && !upKeyHeld)
+		else if (key == _downKey && !upKeyHeld)
 		{
 			downKeyHeld = true;
 		}
@@ -46,12 +49,16 @@
 	void Paddle::onKeyRelease(SDL_Keycode key)
 	{
 		std::cout << "Key released\n";
-		if (key == SDLK_w)
+		if (key == _upKey)
 		{
 			upKeyHeld = false;
 		}
-		else if (key == SDLK_s)
+		else if (key == _downKey)
 		{
 			downKeyHeld = false;
 		}
+	}
+	SDL_Rect* Paddle::getRect()
+	{
+		return &rect;
 	}

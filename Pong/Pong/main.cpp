@@ -30,6 +30,7 @@ bool init()
 		{
 			//Get window surface
 			surface = SDL_GetWindowSurface(window);
+			SDL_SetWindowTitle(window, "Pong: Alpha 1");
 		}
 	}
 	return success;
@@ -63,6 +64,8 @@ int main(int argc, char* args[])
 	Paddle paddle1(10, SDLK_w, SDLK_s);
 	Paddle paddle2(930, SDLK_UP, SDLK_DOWN);
 	Ball ball(paddle1.getRect(), paddle2.getRect());
+
+	int player1 = 0, player2 = 0;
 
 	auto prevTime = std::chrono::high_resolution_clock::now();
 
@@ -101,6 +104,21 @@ int main(int argc, char* args[])
 		paddle1.update(deltatime);
 		paddle2.update(deltatime);
 
+		// check if round is over
+		switch (ball.isOffScreen())
+		{
+		case 1: 
+			player1++;
+			ball.reset();
+			std::cout << "Player 1: " << player1 << " Player 2: " << player2 << "\n";
+			break;
+		case 2:
+			player2++;
+			ball.reset();
+			std::cout << "Player 1: " << player1 << " Player 2: " << player2 << "\n";
+			break;
+		}
+		
 		// draw game entities
 		ball.drawBall(renderer);
 		paddle1.drawPaddle(renderer);

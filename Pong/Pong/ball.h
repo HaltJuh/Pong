@@ -16,7 +16,8 @@ public:
 	void move();
 	void update(double deltatime);
 	void collideWithPaddle(SDL_Rect* rect);
-	
+	int isOffScreen(); //0: on screen, 1: player 1s point, 2: player 2s point
+
 
 private:
 	double _speed = 1000;

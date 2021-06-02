@@ -35,7 +35,6 @@
 	}
 	void Paddle::onKeyPress(SDL_Keycode key)
 	{
-		std::cout << "Key pressed down\n";
 		if (key == _upKey && !downKeyHeld)
 		{
 			upKeyHeld = true;
@@ -48,7 +47,6 @@
 
 	void Paddle::onKeyRelease(SDL_Keycode key)
 	{
-		std::cout << "Key released\n";
 		if (key == _upKey)
 		{
 			upKeyHeld = false;

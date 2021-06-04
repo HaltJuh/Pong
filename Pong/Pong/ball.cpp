@@ -50,41 +50,41 @@ void Ball::update(double deltatime)
 
 void Ball::collideWithPaddle(SDL_Rect* paddle)
 {
-	// this is so fucky that we hate it equally
-	// it's also probably the one causing the teleport bug
-	// needs rewrite asap
 
-	//yeah
-	//the rect parameter in this case is the paddle right?
-	if ((_coord[0] < (double)(paddle->x + paddle->w)) && (_coord[0] + _rect.w > paddle->x)
-		&& (_coord[1] < (double)(paddle->y + paddle->h)) && (_coord[1] + _rect.h > paddle->y))
+	// i think that works for the horizontals
+	// basically, it checks the overlaps and velocities in one go
+	// if the left edge of the ball is greater than the left edge of the paddle BUT less than its right edge,
+	// then we have a horizontal overlap
+	// same with the right edges
+	// let's do the vertical as well
+	// why are there 3 closing parentheses? :thonk:
+	// yeah, try now
+	// I think the corner detection works, it's just that it kinda takes time to move out of the box
+	// :hmm:
+	// it's 4am in here, mind if we stop for now? 
+	// what if we try to do this part separately? when one gets a correct solution, explain to the other
+	// yeah, push the changes to git for now
+
+
+
+	bool leftOverlap = ((_coord[0] < (double)(paddle->x + paddle->w)) && (_coord[0] > (double)paddle->x) && (_velocity[0] < 0));
+	bool rightOverlap = ((_coord[0] > (double)paddle->x) && (_coord[0] < (double)(paddle->x + paddle->w)) && (_velocity[0] > 0));
+	
+	bool topOverlap = ((_coord[1] < (double)(paddle->y + paddle->h)) && (_coord[1] > (double)paddle->y) && (_velocity[1] < 0));
+	bool bottomOverlap = ((_coord[1] > (double)paddle->y) && (_coord[1] < (double)(paddle->y + paddle->h)) && (_velocity[1] > 0));
+	
+	if ((topOverlap || bottomOverlap) && (leftOverlap || rightOverlap))
 	{
-		// ball is to the right of the paddle
-		if (_coord[0] + _rect.w > (double)(paddle->x + paddle->w))
-		{
-			_coord[0] = (double)(paddle->x + paddle->w);
-			_velocity[0] = -_velocity[0];
-		}
-		// ball is to the left of the paddle
-		else if (_coord[0] < paddle->x)
-		{
-			_coord[0] = (double)(paddle->x - _rect.w);
-			_velocity[0] = -_velocity[0];
-		}
+		_velocity[0] = -_velocity[0];
+		_velocity[1] = -_velocity[1];
+		// can you try with this?
 
-		// ball is to the bottom of the paddle
-		if (_coord[1] + _rect.h > (double)(paddle->y + paddle->h))
-		{
-			_coord[1] = (double)(paddle->y + paddle->h);
-			_velocity[1] = -_velocity[1];
-		}
-		// ball is to the top of the paddle
-		else if (_coord[1] < paddle->y)
-		{
-			_coord[1] = (double)(paddle->x - _rect.h);
-			_velocity[1] = -_velocity[1];
-		}
 	}
+
+	//if (topOverlap || bottomOverlap)
+	//{
+	//	_velocity[1] = -_velocity[1];
+	//}
 }
 
 

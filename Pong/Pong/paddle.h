@@ -14,11 +14,10 @@ public:
 	void onKeyRelease(SDL_Keycode key);
 	SDL_Rect* getRect();
 private:
-	SDL_Rect rect;
+	SDL_Rect _rect{ 0, 0, 20, 100 };
 	double _speed = 1000;
-	std::vector<double> _coord = {0,0};
-	std::vector<int> _size{ 20,100 };
+	double _y;
 	SDL_KeyCode _upKey, _downKey;
-	bool upKeyHeld = false;
-	bool downKeyHeld = false;
+	bool _upKeyHeld = false;
+	bool _downKeyHeld = false;
 };

@@ -6,6 +6,8 @@
 #include <algorithm>
 #include <math.h>
 
+
+
 class Ball
 {
 public:
@@ -20,11 +22,10 @@ public:
 
 
 private:
-	double _speed = 1000;
-	std::vector<double> _coord; //[0] = x, [1] = y;
-	std::vector<int> _size{ 20,20 }; //[0] = x, [1] = y;
+	double _speed = 500;
+	std::vector<double> _coord{0,0}; //[0] = x, [1] = y;
 	std::vector<double> _velocity; //[0] = x, [1] = y;
-	SDL_Rect _rect;
+	SDL_Rect _rect{ 0, 0, 20, 20 };
 	SDL_Rect* _paddle1;
 	SDL_Rect* _paddle2;
 };

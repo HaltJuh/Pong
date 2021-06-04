@@ -5,9 +5,8 @@
 
 	Paddle::Paddle(int x, SDL_KeyCode up, SDL_KeyCode down)
 	{
-		_coord[0] = x;
-		_coord[1] = (((double)(SCREEN_HEIGHT) - _size[1]) * 0.5);
-		rect = { (int)_coord[0], (int)_coord[1], _size[0], _size[1] };
+		_y = (((double)(SCREEN_HEIGHT) - 100) * 0.5);
+		_rect.x = x;
 		_upKey = up;
 		_downKey = down;
 	}
@@ -17,31 +16,31 @@
 	}
 	void Paddle::drawPaddle(SDL_Renderer* renderer)
 	{
-		rect.y = (int)_coord[1];
-		SDL_RenderFillRect(renderer, &rect);
+		_rect.y = _y;
+		SDL_RenderFillRect(renderer, &_rect);
 	}
 	
 	void Paddle::update(double deltatime)
 	{
-		if (upKeyHeld)
+		if (_upKeyHeld)
 		{
-			_coord[1] -= (_speed * deltatime);
+			_y -= (_speed * deltatime);
 		}
-		else if (downKeyHeld)
+		else if (_downKeyHeld)
 		{
-			_coord[1] += (_speed * deltatime);
+			_y += (_speed * deltatime);
 		}
-		_coord[1] = std::clamp(_coord[1], 0.0, (double)((double)SCREEN_HEIGHT-_size[1]));
+		_y = std::clamp(_y, 0.0, (double)((double)SCREEN_HEIGHT - _rect.h));
 	}
 	void Paddle::onKeyPress(SDL_Keycode key)
 	{
-		if (key == _upKey && !downKeyHeld)
+		if (key == _upKey && !_downKeyHeld)
 		{
-			upKeyHeld = true;
+			_upKeyHeld = true;
 		}
-		else if (key == _downKey && !upKeyHeld)
+		else if (key == _downKey && !_upKeyHeld)
 		{
-			downKeyHeld = true;
+			_downKeyHeld = true;
 		}
 	}
 
@@ -49,14 +48,14 @@
 	{
 		if (key == _upKey)
 		{
-			upKeyHeld = false;
+			_upKeyHeld = false;
 		}
 		else if (key == _downKey)
 		{
-			downKeyHeld = false;
+			_downKeyHeld = false;
 		}
 	}
 	SDL_Rect* Paddle::getRect()
 	{
-		return &rect;
+		return &_rect;
 	}

@@ -18,10 +18,10 @@ void Ball::reset()
 	_xPos = ((double)SCREEN_WIDTH - _rect.w) * 0.5;
 	_yPos = ((double)SCREEN_HEIGHT - _rect.h) * 0.5;
 
-	// so, we need a random range and a random number between that range
-	double normalizedVelocity = (1.0 / std::sqrt(2)) * _speed;
-	_xVelocity = -normalizedVelocity;
-	_yVelocity = normalizedVelocity;
+	int min = (rand() % 4) * 90 + 15;
+	double angle = (double(rand() % 60) + min) * M_PI / 180.0;
+	_xVelocity = std::cos(angle) * _speed;
+	_yVelocity = std::sin(angle) * _speed;
 
 }
 

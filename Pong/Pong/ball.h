@@ -22,8 +22,10 @@ public:
 
 private:
 	double _speed = 500;
-	std::vector<double> _coord{0,0}; //[0] = x, [1] = y;
-	std::vector<double> _velocity; //[0] = x, [1] = y;
+	double _xPos = 0;
+	double _yPos = 0;
+	double _xVelocity = 0;
+	double _yVelocity = 0;
 	SDL_Rect _rect{ 0, 0, 20, 20 };
 	SDL_Rect* _paddle1;
 	SDL_Rect* _paddle2;

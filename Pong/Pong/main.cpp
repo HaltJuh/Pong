@@ -4,6 +4,7 @@
 #include <chrono>
 #include <SDL.h>
 #include <iostream>
+#include <time.h>
 
 SDL_Window* window = NULL;
 SDL_Surface* surface = NULL;
@@ -49,6 +50,7 @@ void close()
 
 int main(int argc, char* args[])
 {
+	srand(time(NULL));
 	bool quit = false;
 	SDL_Event e;
 	if(!init())

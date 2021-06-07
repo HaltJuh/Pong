@@ -12,94 +12,104 @@ Ball::~Ball()
 {
 
 }
+
 void Ball::reset()
 {
-	_coord[0] = ((double)SCREEN_WIDTH - _rect.w) * 0.5;
-	_coord[1] = ((double)SCREEN_HEIGHT - _rect.h) * 0.5;
+	_xPos = ((double)SCREEN_WIDTH - _rect.w) * 0.5;
+	_yPos = ((double)SCREEN_HEIGHT - _rect.h) * 0.5;
 
+	// so, we need a random range and a random number between that range
 	double normalizedVelocity = (1.0 / std::sqrt(2)) * _speed;
-	_velocity = { -normalizedVelocity, normalizedVelocity };
+	_xVelocity = -normalizedVelocity;
+	_yVelocity = normalizedVelocity;
+
 }
+
 void Ball::drawBall(SDL_Renderer* renderer)
 {
-	_rect.x = (int)_coord[0];
-	_rect.y = (int)_coord[1];
+	_rect.x = (int)_xPos;
+	_rect.y = (int)_yPos;
 	
 	SDL_RenderFillRect(renderer, &_rect);
-}
-void Ball::move()
-{
-	_coord[0] = _coord[0] + 5;
 }
 
 void Ball::update(double deltatime)
 {
-	_coord[0] = _coord[0] + (_velocity[0] * deltatime);
-	_coord[1] = _coord[1] + (_velocity[1] * deltatime);
+	_xPos += (_xVelocity * deltatime);
+	_yPos += (_yVelocity * deltatime);
 
 	collideWithPaddle(_paddle1);
 	collideWithPaddle(_paddle2);
 
-	if (_coord[1] < 0 || _coord[1] + _rect.h > SCREEN_HEIGHT)
+	if (_yPos < 0 || _yPos + _rect.h > SCREEN_HEIGHT)
 	{
-		_velocity[1] = -_velocity[1];
+		_yVelocity *= -1;
 	}
-
-	_coord[1] = std::clamp(_coord[1], 0.0, (double)((double)SCREEN_HEIGHT - _rect.h));
+	_yPos = std::clamp(_yPos, 0.0, (double)((double)SCREEN_HEIGHT - _rect.h));
 }
 
 void Ball::collideWithPaddle(SDL_Rect* paddle)
 {
-	// not uberly necessary, but feels much cleaner imo - Hatter
+	// not uberly necessary, but feels much cleaner
 	double paddleR = (double)paddle->x + paddle->w;
 	double paddleB = (double)paddle->y + paddle->h;
-	double ballR = _coord[0] + _rect.w;
-	double ballB = _coord[1] + _rect.h;
+	double ballR = _xPos + _rect.w;
+	double ballB = _yPos + _rect.h;
 
 	// store overlap bools instead of checking multiple times
-	bool leftOverlap = _coord[0] < paddleR && _coord[0] > paddle->x;
+	bool leftOverlap = _xPos < paddleR && _xPos > paddle->x;
 	bool rightOverlap = ballR > paddle->x && ballR < paddleR;
-	bool topOverlap = _coord[1] < paddleB && _coord[1] > paddle->y;
+	bool topOverlap = _yPos < paddleB && _yPos > paddle->y;
 	bool bottomOverlap = ballB > paddle->y && ballB < paddleB;
 
+	int min = -1;
+	
 	if (leftOverlap || rightOverlap)
 	{
-		if (!bottomOverlap && topOverlap && _velocity[1] < 0)
+		if (!bottomOverlap && topOverlap && _yVelocity < 0)
 		{
-			_coord[1] = paddleB;
-			_velocity[1] *= -1;
+			_yPos = paddleB;
+			min = (_xVelocity < 0) ? 105 : 15;
 		}
-		else if (!topOverlap && bottomOverlap && _velocity[1] > 0)
+		else if (!topOverlap && bottomOverlap && _yVelocity > 0)
 		{
-			_coord[1] = paddle->y - (double)_rect.h;
-			_velocity[1] *= -1;
+			_yPos = paddle->y - (double)_rect.h;
+			min = (_xVelocity < 0) ? 195 : 285;
 		}
 	}
 
 	if (topOverlap || bottomOverlap)
 	{
-		if (!rightOverlap && leftOverlap && _velocity[0] < 0)
+		if (!rightOverlap && leftOverlap && _xVelocity < 0)
 		{
-			_coord[0] = paddleR;
-			_velocity[0] *= -1;
+			_xPos = paddleR;
+			min = (_yVelocity < 0) ? 285 : 15;
 		}
-		else if (!leftOverlap && rightOverlap && _velocity[0] > 0)
+		else if (!leftOverlap && rightOverlap && _xVelocity > 0)
 		{
-			_coord[0] = paddle->x - (double)_rect.w;
-			_velocity[0] *= -1;
+			_xPos = paddle->x - (double)_rect.w;
+			min = (_yVelocity < 0) ? 195 : 105;
 		}
 	}
+
+	if (min > 0)
+	{
+		double angle = (double(rand() % 60) + min) * M_PI / 180.0;
+		_xVelocity = std::cos(angle) * _speed;
+		_yVelocity = std::sin(angle) * _speed;
+	}
+
 }
 
 
 //0: on screen, 1: player 1s point, 2: player 2s point
 int Ball::isOffScreen()
 {
-	if (_coord[0] + _rect.w < -10)
+	if (_xPos + _rect.w < -10)
 	{
 		return 2;
 	}
-	else if (_coord[0] > (double)SCREEN_WIDTH + 10)
+	else if (_xPos > (double)SCREEN_WIDTH + 10)
 	{
 		return 1;
 	}

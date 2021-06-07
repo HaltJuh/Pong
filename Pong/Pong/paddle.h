@@ -20,4 +20,5 @@ private:
 	SDL_KeyCode _upKey, _downKey;
 	bool _upKeyHeld = false;
 	bool _downKeyHeld = false;
+
 };

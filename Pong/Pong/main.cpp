@@ -5,7 +5,23 @@
 #include <SDL.h>
 #include <iostream>
 #include <time.h>
+#include <SDL_ttf.h>
 
+
+//do we wanna add a function for it?
+//we can just make the rects once and then just redraw them
+//it does?
+//seems simply enough. is it just one pixel wide?
+//it might not be exactly in the middle if that's the case, as our sizes are even numbers
+//we could just make 2 2 pixel wide rectangels, one is vertical, one horizontal
+//do we just create them at the start of main?
+
+// not really, could just do it before drawing the game entities
+// sdl has a drawline function, I think
+// https://wiki.libsdl.org/SDL_RenderDrawLine
+// hmm, seems SDL doesn't support line widths
+// guess we'll go with rectangles
+// yeah
 SDL_Window* window = NULL;
 SDL_Surface* surface = NULL;
 SDL_Renderer* renderer = NULL;
@@ -62,7 +78,19 @@ int main(int argc, char* args[])
 		SDL_UpdateWindowSurface(window);
 	}
 
-	
+	//I think it was x,y,w,h  right?
+	//so do we want the horizontal to start at 0, 49 and end at screen:width, 50?
+	//what should the vertical be
+	//do we need to minus 1 from it? the pixels start at 0, so pixel 480 is actually the 481st pixel
+	//or is 1 pixel so little that it won't be noticed
+	//I thought it worked so that as the screen lenght width is 960, the pixels went from 0 to 959. But we'll see once we draw it
+
+	// 
+
+	// create rectangles for lines
+	SDL_Rect horizontalLine{ 0, 49, SCREEN_WIDTH, 2 };
+	SDL_Rect verticalLine{ SCREEN_WIDTH * 0.5, 0, 2, SCREEN_HEIGHT };
+
 	Paddle paddle1(10, SDLK_w, SDLK_s);
 	Paddle paddle2(930, SDLK_UP, SDLK_DOWN);
 	Ball ball(paddle1.getRect(), paddle2.getRect());
@@ -120,6 +148,10 @@ int main(int argc, char* args[])
 			std::cout << "Player 1: " << player1 << " Player 2: " << player2 << "\n";
 			break;
 		}
+
+		// draw lines
+		SDL_RenderFillRect(renderer, &horizontalLine);
+		SDL_RenderFillRect(renderer, &verticalLine);
 		
 		// draw game entities
 		ball.drawBall(renderer);

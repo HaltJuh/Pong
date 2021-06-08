@@ -16,7 +16,7 @@ Ball::~Ball()
 void Ball::reset()
 {
 	_xPos = ((double)SCREEN_WIDTH - _rect.w) * 0.5;
-	_yPos = ((double)SCREEN_HEIGHT - _rect.h) * 0.5;
+	_yPos = ((double)SCREEN_HEIGHT + HEIGHT_OFFSET - _rect.h) * 0.5;
 
 	int min = (rand() % 4) * 90 + 15;
 	double angle = (double(rand() % 60) + min) * M_PI / 180.0;
@@ -41,12 +41,13 @@ void Ball::update(double deltatime)
 	collideWithPaddle(_paddle1);
 	collideWithPaddle(_paddle2);
 
-	if (_yPos < 0 || _yPos + _rect.h > SCREEN_HEIGHT)
+	if (_yPos < 50 || _yPos + _rect.h > SCREEN_HEIGHT)
 	{
 		_yVelocity *= -1;
 	}
-	_yPos = std::clamp(_yPos, 0.0, (double)((double)SCREEN_HEIGHT - _rect.h));
+	_yPos = std::clamp(_yPos, (double)HEIGHT_OFFSET, (double)((double)SCREEN_HEIGHT - _rect.h));
 }
+
 
 void Ball::collideWithPaddle(SDL_Rect* paddle)
 {

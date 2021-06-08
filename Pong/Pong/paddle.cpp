@@ -3,9 +3,10 @@
 #include <iostream>
 
 
+
 	Paddle::Paddle(int x, SDL_KeyCode up, SDL_KeyCode down)
 	{
-		_y = (((double)(SCREEN_HEIGHT) - 100) * 0.5);
+		_y = ((double)SCREEN_HEIGHT + HEIGHT_OFFSET - _rect.h) * 0.5;
 		_rect.x = x;
 		_upKey = up;
 		_downKey = down;
@@ -30,7 +31,7 @@
 		{
 			_y += (_speed * deltatime);
 		}
-		_y = std::clamp(_y, 0.0, (double)((double)SCREEN_HEIGHT - _rect.h));
+		_y = std::clamp(_y, (double)HEIGHT_OFFSET, (double)((double)SCREEN_HEIGHT - _rect.h));
 	}
 	void Paddle::onKeyPress(SDL_Keycode key)
 	{

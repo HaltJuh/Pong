@@ -14,7 +14,6 @@ public:
 	~Ball();
 	void reset();
 	void drawBall(SDL_Renderer* renderer);
-	void move();
 	void update(double deltatime);
 	void collideWithPaddle(SDL_Rect* rect);
 	int isOffScreen(); //0: on screen, 1: player 1s point, 2: player 2s point

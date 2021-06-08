@@ -66,6 +66,7 @@ void close()
 
 int main(int argc, char* args[])
 {
+	TTF_Font* font = TTF_OpenFont("COMIC.tff", 20);
 	srand(time(NULL));
 	bool quit = false;
 	SDL_Event e;
@@ -78,14 +79,22 @@ int main(int argc, char* args[])
 		SDL_UpdateWindowSurface(window);
 	}
 
-	//I think it was x,y,w,h  right?
-	//so do we want the horizontal to start at 0, 49 and end at screen:width, 50?
-	//what should the vertical be
-	//do we need to minus 1 from it? the pixels start at 0, so pixel 480 is actually the 481st pixel
-	//or is 1 pixel so little that it won't be noticed
-	//I thought it worked so that as the screen lenght width is 960, the pixels went from 0 to 959. But we'll see once we draw it
+	//so now, figure out how to use fonts
+	//I wonder how we add fonts
+	//so we need to create a texture, should we make it so that, we only update them when a point is scored?
+	//I guess we drop the font in to the repository and then use TTF__Openfont to access it
+	//do I just go download a sans font?
+	//this might be a dumb question, but which folder is the working directory, is it where the solution is
+	//or where the .cpps and such are?
 
-	// 
+
+	// what font are we using btw?
+	// Comic Sans?
+	// https://stackoverflow.com/questions/22886500/how-to-render-text-in-sdl2
+	// yes
+	// yeah.
+	// Resource Files, I think?
+	// try all of them and see which works :v
 
 	// create rectangles for lines
 	SDL_Rect horizontalLine{ 0, 49, SCREEN_WIDTH, 2 };

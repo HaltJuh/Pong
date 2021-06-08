@@ -6,6 +6,7 @@
 #include <iostream>
 #include <time.h>
 #include <SDL_ttf.h>
+#include <string>
 
 
 //do we wanna add a function for it?
@@ -47,7 +48,7 @@ bool init()
 		{
 			//Get window surface
 			surface = SDL_GetWindowSurface(window);
-			SDL_SetWindowTitle(window, "Pong: Alpha 1");
+			SDL_SetWindowTitle(window, "Pong: Beta 1");
 		}
 	}
 	return success;
@@ -66,7 +67,16 @@ void close()
 
 int main(int argc, char* args[])
 {
-	TTF_Font* font = TTF_OpenFont("COMIC.tff", 20);
+
+	// hmmm, try textures?
+	// yeah
+	if (TTF_Init() < 0)
+	{
+		std::cout << "Initialization failed: " << TTF_GetError() << "\n";
+	}
+
+	TTF_Font* font = TTF_OpenFont("COMIC.ttf", 20);
+	std::cout << TTF_GetError();
 	srand(time(NULL));
 	bool quit = false;
 	SDL_Event e;
@@ -79,23 +89,6 @@ int main(int argc, char* args[])
 		SDL_UpdateWindowSurface(window);
 	}
 
-	//so now, figure out how to use fonts
-	//I wonder how we add fonts
-	//so we need to create a texture, should we make it so that, we only update them when a point is scored?
-	//I guess we drop the font in to the repository and then use TTF__Openfont to access it
-	//do I just go download a sans font?
-	//this might be a dumb question, but which folder is the working directory, is it where the solution is
-	//or where the .cpps and such are?
-
-
-	// what font are we using btw?
-	// Comic Sans?
-	// https://stackoverflow.com/questions/22886500/how-to-render-text-in-sdl2
-	// yes
-	// yeah.
-	// Resource Files, I think?
-	// try all of them and see which works :v
-
 	// create rectangles for lines
 	SDL_Rect horizontalLine{ 0, 49, SCREEN_WIDTH, 2 };
 	SDL_Rect verticalLine{ SCREEN_WIDTH * 0.5, 0, 2, SCREEN_HEIGHT };
@@ -104,7 +97,21 @@ int main(int argc, char* args[])
 	Paddle paddle2(930, SDLK_UP, SDLK_DOWN);
 	Ball ball(paddle1.getRect(), paddle2.getRect());
 
+	
+
+	
 	int player1 = 0, player2 = 0;
+
+
+	SDL_Color fontColor = { 255, 255, 255 };
+	SDL_Surface* p1Text = TTF_RenderText_Solid(font, std::to_string(player1).c_str(), fontColor);
+	SDL_Surface* p2Text = TTF_RenderText_Solid(font, std::to_string(player2).c_str(), fontColor);
+	SDL_Rect p1TextRect{ (SCREEN_WIDTH * 0.25) - (p1Text->w * 0.5), (50 - p1Text->h) * 0.5, p1Text->w, p1Text->h };
+	SDL_Rect p2TextRect{ (SCREEN_WIDTH * 0.75) - (p2Text->w * 0.5), (50 - p2Text->h) * 0.5, p2Text->w, p2Text->h };
+	
+	// SDL_Texture* p1Texture = SDL_CreateTextureFromSurface(renderer, p1Text);
+	// SDL_Texture* p2Texture = SDL_CreateTextureFromSurface(renderer, p2Text);
+	
 
 	auto prevTime = std::chrono::high_resolution_clock::now();
 
@@ -148,20 +155,28 @@ int main(int argc, char* args[])
 		{
 		case 1: 
 			player1++;
+			p1Text = TTF_RenderText_Solid(font, std::to_string(player1).c_str(), fontColor);
+			p1TextRect.x = (SCREEN_WIDTH * 0.25) - (p1Text->w * 0.5);
+			p1TextRect.w = p1Text->w;
 			ball.reset();
-			std::cout << "Player 1: " << player1 << " Player 2: " << player2 << "\n";
 			break;
 		case 2:
 			player2++;
+			p2Text = TTF_RenderText_Solid(font, std::to_string(player2).c_str(), fontColor);
+			p2TextRect.x = (SCREEN_WIDTH * 0.25) - (p2Text->w * 0.5);
+			p2TextRect.w = p2Text->w;
 			ball.reset();
-			std::cout << "Player 1: " << player1 << " Player 2: " << player2 << "\n";
 			break;
 		}
 
 		// draw lines
 		SDL_RenderFillRect(renderer, &horizontalLine);
 		SDL_RenderFillRect(renderer, &verticalLine);
-		
+
+		// print scores
+		SDL_BlitSurface(p1Text, NULL, surface, &p1TextRect); //time to test?
+		SDL_BlitSurface(p2Text, NULL, surface, &p2TextRect); // I think that works? yeah
+
 		// draw game entities
 		ball.drawBall(renderer);
 		paddle1.drawPaddle(renderer);

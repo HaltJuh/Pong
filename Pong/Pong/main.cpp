@@ -109,9 +109,24 @@ int main(int argc, char* args[])
 	SDL_Rect p1TextRect{ (SCREEN_WIDTH * 0.25) - (p1Text->w * 0.5), (50 - p1Text->h) * 0.5, p1Text->w, p1Text->h };
 	SDL_Rect p2TextRect{ (SCREEN_WIDTH * 0.75) - (p2Text->w * 0.5), (50 - p2Text->h) * 0.5, p2Text->w, p2Text->h };
 	
-	// SDL_Texture* p1Texture = SDL_CreateTextureFromSurface(renderer, p1Text);
-	// SDL_Texture* p2Texture = SDL_CreateTextureFromSurface(renderer, p2Text);
-	
+	SDL_Texture* p1Texture = SDL_CreateTextureFromSurface(renderer, p1Text);
+	SDL_Texture* p2Texture = SDL_CreateTextureFromSurface(renderer, p2Text);
+
+	// we were trying to print the scores, right?
+	// don't think so
+	// yeah
+	// vs won't let me scroll again
+	// just waited :v
+	// in the actual printing part, I think
+
+	//hi
+	//yeah, we tried with rects, but nothing showed up. So next we we were gonna go with the textures.
+	//Does renderclear clear textures as well?
+	//we can, try and if not, we'll just look up how to do it, right?
+	//we'll be going with RenderCopy for the textures?
+	//hmmm, weird
+	//you remember what fixed it last time?
+	//do we put RenderCopy in the place where we were trying to put the rects
 
 	auto prevTime = std::chrono::high_resolution_clock::now();
 
@@ -158,13 +173,15 @@ int main(int argc, char* args[])
 			p1Text = TTF_RenderText_Solid(font, std::to_string(player1).c_str(), fontColor);
 			p1TextRect.x = (SCREEN_WIDTH * 0.25) - (p1Text->w * 0.5);
 			p1TextRect.w = p1Text->w;
+			p1Texture = SDL_CreateTextureFromSurface(renderer, p1Text);
 			ball.reset();
 			break;
 		case 2:
 			player2++;
 			p2Text = TTF_RenderText_Solid(font, std::to_string(player2).c_str(), fontColor);
-			p2TextRect.x = (SCREEN_WIDTH * 0.25) - (p2Text->w * 0.5);
+			p2TextRect.x = (SCREEN_WIDTH * 0.75) - (p2Text->w * 0.5);
 			p2TextRect.w = p2Text->w;
+			p2Texture = SDL_CreateTextureFromSurface(renderer, p2Text);
 			ball.reset();
 			break;
 		}
@@ -174,8 +191,12 @@ int main(int argc, char* args[])
 		SDL_RenderFillRect(renderer, &verticalLine);
 
 		// print scores
-		SDL_BlitSurface(p1Text, NULL, surface, &p1TextRect); //time to test?
-		SDL_BlitSurface(p2Text, NULL, surface, &p2TextRect); // I think that works? yeah
+		// SDL_BlitSurface(p1Text, NULL, surface, &p1TextRect); //time to test?
+		// SDL_BlitSurface(p2Text, NULL, surface, &p2TextRect); // I think that works? yeah
+
+		SDL_RenderCopy(renderer, p1Texture, NULL, &p1TextRect); //hmm, would that do it
+		SDL_RenderCopy(renderer, p2Texture, NULL, &p2TextRect); // think so
+		//it works kinda. when player 2 gets points, their score counter moves to where player 1s is
 
 		// draw game entities
 		ball.drawBall(renderer);

@@ -6,7 +6,9 @@
 class Paddle
 {
 public:
+	Paddle();
 	Paddle(int x, SDL_KeyCode up, SDL_KeyCode down);
+	void initialize(int x, SDL_KeyCode up, SDL_KeyCode down);
 	~Paddle();
 	void drawPaddle(SDL_Renderer* renderer);
 	void update(double deltatime);

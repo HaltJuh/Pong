@@ -193,15 +193,28 @@ int main(int argc, char* args[])
 		// print scores
 		// SDL_BlitSurface(p1Text, NULL, surface, &p1TextRect); //time to test?
 		// SDL_BlitSurface(p2Text, NULL, surface, &p2TextRect); // I think that works? yeah
+		// toot
+		// what now? :v
+		// can you send a screenshot?
+		// no
+		// only the update and draw stuff (and scores)
+		// yeah, game.update
+		// yep
+		// 
 
 		SDL_RenderCopy(renderer, p1Texture, NULL, &p1TextRect); //hmm, would that do it
 		SDL_RenderCopy(renderer, p2Texture, NULL, &p2TextRect); // think so
 		//it works kinda. when player 2 gets points, their score counter moves to where player 1s is
+		//okay, fixed it. It works
+		//I dunno.
+		//Will we call it like game.update or something?
+		//and that'll do all the draw calls and update calls?
 
 		// draw game entities
 		ball.drawBall(renderer);
 		paddle1.drawPaddle(renderer);
 		paddle2.drawPaddle(renderer);
+
 		SDL_RenderPresent(renderer);
 
 		prevTime = std::chrono::high_resolution_clock::now();

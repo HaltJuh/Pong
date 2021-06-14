@@ -10,7 +10,9 @@
 class Ball
 {
 public:
+	Ball();
 	Ball(SDL_Rect* paddle1, SDL_Rect* paddle2);
+	void initialize(SDL_Rect* paddle1, SDL_Rect* paddle2);
 	~Ball();
 	void reset();
 	void drawBall(SDL_Renderer* renderer);

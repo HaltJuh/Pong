@@ -7,7 +7,12 @@ Ball::Ball(SDL_Rect* paddle1, SDL_Rect* paddle2)
 	_paddle1 = paddle1;
 	_paddle2 = paddle2;
 }
-
+void Ball::initialize(SDL_Rect* paddle1, SDL_Rect* paddle2)
+{
+	reset();
+	_paddle1 = paddle1;
+	_paddle2 = paddle2;
+}
 Ball::~Ball()
 {
 

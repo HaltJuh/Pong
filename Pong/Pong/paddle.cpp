@@ -11,6 +11,13 @@
 		_upKey = up;
 		_downKey = down;
 	}
+	void Paddle::initialize(int x, SDL_KeyCode up, SDL_KeyCode down)
+	{
+		_y = ((double)SCREEN_HEIGHT + HEIGHT_OFFSET - _rect.h) * 0.5;
+		_rect.x = x;
+		_upKey = up;
+		_downKey = down;
+	}
 	Paddle::~Paddle()
 	{
 

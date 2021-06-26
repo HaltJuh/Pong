@@ -87,7 +87,7 @@ int main(int argc, char* args[])
 
 	while (!quit)
 	{
-		bool gameOver = game.getGameStatus() != 0; // does this autoconvert?
+		bool gameOver = game.getGameStatus() != 0;
 		auto currentTime = std::chrono::high_resolution_clock::now();
 		double deltatime = std::chrono::duration<double, std::chrono::milliseconds::period>(currentTime - prevTime).count();
 
@@ -131,7 +131,6 @@ int main(int argc, char* args[])
 		if (gameOver)
 		{
 			SDL_RenderCopy(renderer, continuePromptTexture, NULL, &continuePromptRect);
-			
 		}
 		else
 		{

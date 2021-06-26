@@ -1,14 +1,15 @@
 #include "game.h"
 #include <string>
 
-Game::Game()
+Game::Game(TTF_Font* scoreFont, SDL_Renderer* renderer)
 {
 	_paddle1.initialize(10, SDLK_w, SDLK_s);
 	_paddle2.initialize(930, SDLK_UP, SDLK_DOWN);
 	_ball.initialize(_paddle1.getRect(), _paddle2.getRect());
 
-	_scoreFont = TTF_OpenFont("COMIC.ttf", 20);
-	
+	_scoreFont = scoreFont;
+	_renderer = renderer;
+
 	updateScore(1);
 	updateScore(2);
 
@@ -19,24 +20,27 @@ Game::Game()
 	_p2ScoreRect.y = (50 - _p2ScoreText->h) * 0.5;
 	_p2ScoreRect.h = _p2ScoreText->h;
 }
+Game::~Game()
+{
+
+}
 void Game::updateScore(int player)
 {
 	switch (player)
-		{
+	{
 		case 1: 
 			_p1ScoreText = TTF_RenderText_Solid(_scoreFont, std::to_string(_p1Score).c_str(), _scoreColor);
 			_p1ScoreRect.x = (SCREEN_WIDTH * 0.25) - (_p1ScoreText->w * 0.5);
 			_p1ScoreRect.w = _p1ScoreText->w;
-			//p1Texture = SDL_CreateTextureFromSurface(renderer, p1Text);
+			_p1ScoreTexture = SDL_CreateTextureFromSurface(_renderer, _p1ScoreText);
 			break;
-			
 		case 2:
 			_p2ScoreText = TTF_RenderText_Solid(_scoreFont, std::to_string(_p2Score).c_str(), _scoreColor);
 			_p2ScoreRect.x = (SCREEN_WIDTH * 0.75) - (_p2ScoreText->w * 0.5);
 			_p2ScoreRect.w = _p2ScoreText->w;
-			//p2Texture = SDL_CreateTextureFromSurface(renderer, p2Text);
+			_p2ScoreTexture = SDL_CreateTextureFromSurface(_renderer, _p2ScoreText);
 			break;
-		}
+	}
 }
 void Game::update(double deltatime)
 {
@@ -58,18 +62,14 @@ void Game::update(double deltatime)
 		_ball.reset();
 	}
 }
-void Game::draw(SDL_Renderer* renderer)
+void Game::draw()
 {
-	// create score textures before drawing them (sorry DyXel)
-	_p1ScoreTexture = SDL_CreateTextureFromSurface(renderer, _p1ScoreText);
-	_p1ScoreTexture = SDL_CreateTextureFromSurface(renderer, _p2ScoreText);
+	SDL_RenderCopy(_renderer, _p1ScoreTexture, NULL, &_p1ScoreRect);
+	SDL_RenderCopy(_renderer, _p2ScoreTexture, NULL, &_p2ScoreRect);
 
-	SDL_RenderCopy(renderer, _p1ScoreTexture, NULL, &_p1ScoreRect);
-	SDL_RenderCopy(renderer, _p2ScoreTexture, NULL, &_p2ScoreRect);
-
-	_ball.drawBall(renderer);
-	_paddle1.drawPaddle(renderer);
-	_paddle2.drawPaddle(renderer);
+	_ball.drawBall(_renderer);
+	_paddle1.drawPaddle(_renderer);
+	_paddle2.drawPaddle(_renderer);
 }
 void Game::onKeyPress(SDL_Keycode key)
 {
@@ -81,13 +81,14 @@ void Game::onKeyRelease(SDL_Keycode key)
 	_paddle1.onKeyRelease(key);
 	_paddle2.onKeyRelease(key);
 }
-int Game::isGameOver()
+/// 0: game continues, 1: player1 won, 2: player2 won
+int Game::getGameStatus()
 {
-	if (_p1Score >= 10)
+	if (_p1Score >= 1)
 	{
 		return 1;
 	}
-	else if (_p2Score >= 10)
+	else if (_p2Score >= 1)
 	{
 		return 2;
 	}

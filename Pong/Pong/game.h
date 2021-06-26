@@ -4,22 +4,9 @@
 #include "constants.h"
 #include "paddle.h"
 #include "ball.h"
+
 class Game
 {
-	// nope
-	// do you wanna:
-	// a) define just one game object and reset it every end of game
-	// or b) define a new game object every time the game ends?
-	// also, yeah, we need key input stuff
-	// yeah, doesn't need them. 
-	// the game can be defined in the top of main, then redefined to a new game (for b)
-	// I don't get it :v
-	// the game can be redefined inside the loop (nothing different from resetting inside)
-	// I'm thinking b, since we won't need a reset function (it'll just use the constructor)
-	// added the functions just now
-	// time for .cpp
-	
-
 private:
 	// pong game elements
 	bool _gameover = false;
@@ -35,15 +22,16 @@ private:
 	SDL_Texture* _p1ScoreTexture; 
 	SDL_Texture* _p2ScoreTexture;
 	TTF_Font* _scoreFont;
+	SDL_Renderer* _renderer;
 
 	void updateScore(int);
 	
 public:
-	Game();
+	Game(TTF_Font*, SDL_Renderer*);
 	~Game();
 	void update(double);
-	void draw(SDL_Renderer*);
+	void draw();
 	void onKeyPress(SDL_Keycode key);
 	void onKeyRelease(SDL_Keycode key);
-	int isGameOver(); // 0: game continues, 1: player1 won, 2: player2 won
+	int getGameStatus(); 
 };

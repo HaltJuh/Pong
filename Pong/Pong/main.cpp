@@ -1,6 +1,7 @@
 #include "constants.h"
 #include "ball.h"
 #include "paddle.h"
+#include "game.h"
 #include <chrono>
 #include <SDL.h>
 #include <iostream>
@@ -9,20 +10,6 @@
 #include <string>
 
 
-//do we wanna add a function for it?
-//we can just make the rects once and then just redraw them
-//it does?
-//seems simply enough. is it just one pixel wide?
-//it might not be exactly in the middle if that's the case, as our sizes are even numbers
-//we could just make 2 2 pixel wide rectangels, one is vertical, one horizontal
-//do we just create them at the start of main?
-
-// not really, could just do it before drawing the game entities
-// sdl has a drawline function, I think
-// https://wiki.libsdl.org/SDL_RenderDrawLine
-// hmm, seems SDL doesn't support line widths
-// guess we'll go with rectangles
-// yeah
 SDL_Window* window = NULL;
 SDL_Surface* surface = NULL;
 SDL_Renderer* renderer = NULL;
@@ -68,16 +55,11 @@ void close()
 int main(int argc, char* args[])
 {
 
-	// hmmm, try textures?
-	// yeah
 	if (TTF_Init() < 0)
 	{
 		std::cout << "Initialization failed: " << TTF_GetError() << "\n";
 	}
 
-	TTF_Font* font = TTF_OpenFont("COMIC.ttf", 20);
-	std::cout << TTF_GetError();
-	srand(time(NULL));
 	bool quit = false;
 	SDL_Event e;
 	if(!init())
@@ -89,52 +71,25 @@ int main(int argc, char* args[])
 		SDL_UpdateWindowSurface(window);
 	}
 
+	TTF_Font* font = TTF_OpenFont("COMIC.ttf", 20);
+	SDL_Color promptColor = { 255, 255, 255 };
+
 	// create rectangles for lines
 	SDL_Rect horizontalLine{ 0, 49, SCREEN_WIDTH, 2 };
 	SDL_Rect verticalLine{ SCREEN_WIDTH * 0.5, 0, 2, SCREEN_HEIGHT };
 
-	Paddle paddle1(10, SDLK_w, SDLK_s);
-	Paddle paddle2(930, SDLK_UP, SDLK_DOWN);
-	Ball ball(paddle1.getRect(), paddle2.getRect());
+	SDL_Surface* continuePromptText = TTF_RenderText_Blended_Wrapped(font, ("Enter to play again.\nEscape to exit."), promptColor, 256);
+	SDL_Rect continuePromptRect{ (SCREEN_WIDTH - continuePromptText->w) / 2, (SCREEN_HEIGHT - continuePromptText->h) / 2, continuePromptText->w, continuePromptText->h };
+	SDL_Texture* continuePromptTexture = SDL_CreateTextureFromSurface(renderer, continuePromptText);
 
-	
-
-	
-	int player1 = 0, player2 = 0;
-
-
-	SDL_Color fontColor = { 255, 255, 255 };
-	SDL_Surface* p1Text = TTF_RenderText_Solid(font, std::to_string(player1).c_str(), fontColor);
-	SDL_Surface* p2Text = TTF_RenderText_Solid(font, std::to_string(player2).c_str(), fontColor);
-	SDL_Rect p1TextRect{ (SCREEN_WIDTH * 0.25) - (p1Text->w * 0.5), (50 - p1Text->h) * 0.5, p1Text->w, p1Text->h };
-	SDL_Rect p2TextRect{ (SCREEN_WIDTH * 0.75) - (p2Text->w * 0.5), (50 - p2Text->h) * 0.5, p2Text->w, p2Text->h };
-	
-	SDL_Texture* p1Texture = SDL_CreateTextureFromSurface(renderer, p1Text);
-	SDL_Texture* p2Texture = SDL_CreateTextureFromSurface(renderer, p2Text);
-
-	// we were trying to print the scores, right?
-	// don't think so
-	// yeah
-	// vs won't let me scroll again
-	// just waited :v
-	// in the actual printing part, I think
-
-	//hi
-	//yeah, we tried with rects, but nothing showed up. So next we we were gonna go with the textures.
-	//Does renderclear clear textures as well?
-	//we can, try and if not, we'll just look up how to do it, right?
-	//we'll be going with RenderCopy for the textures?
-	//hmmm, weird
-	//you remember what fixed it last time?
-	//do we put RenderCopy in the place where we were trying to put the rects
-
+	Game game(font, renderer);
 	auto prevTime = std::chrono::high_resolution_clock::now();
 
 	while (!quit)
 	{
+		bool gameOver = game.getGameStatus() != 0; // does this autoconvert?
 		auto currentTime = std::chrono::high_resolution_clock::now();
 		double deltatime = std::chrono::duration<double, std::chrono::milliseconds::period>(currentTime - prevTime).count();
-		int input = 0;
 
 		// handle events
 		while (SDL_PollEvent(&e) != 0)
@@ -145,80 +100,57 @@ int main(int argc, char* args[])
 			}
 			else if (e.type == SDL_KEYDOWN)
 			{
-				paddle1.onKeyPress(e.key.keysym.sym);
-				paddle2.onKeyPress(e.key.keysym.sym);
+				if (gameOver)
+				{
+					if (e.key.keysym.sym == SDLK_RETURN)
+					{
+						Game tempGame(font, renderer);
+						game = tempGame;
+						gameOver = false;
+					}
+					else if(e.key.keysym.sym == SDLK_ESCAPE)
+					{
+						quit = true;
+					}
+				}
+				else
+				{
+					game.onKeyPress(e.key.keysym.sym);
+				}
 			}
-			else if (e.type == SDL_KEYUP)
+			else if (e.type == SDL_KEYUP && !gameOver)
 			{
-				paddle1.onKeyRelease(e.key.keysym.sym);
-				paddle2.onKeyRelease(e.key.keysym.sym);
+				game.onKeyRelease(e.key.keysym.sym);
 			}
 		}
-
+		
 		// clear screen
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 		SDL_RenderClear(renderer);
 		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-
-		// update game entities
-		ball.update(deltatime);
-		paddle1.update(deltatime);
-		paddle2.update(deltatime);
-
-		// check if round is over
-		switch (ball.isOffScreen())
+		if (gameOver)
 		{
-		case 1: 
-			player1++;
-			p1Text = TTF_RenderText_Solid(font, std::to_string(player1).c_str(), fontColor);
-			p1TextRect.x = (SCREEN_WIDTH * 0.25) - (p1Text->w * 0.5);
-			p1TextRect.w = p1Text->w;
-			p1Texture = SDL_CreateTextureFromSurface(renderer, p1Text);
-			ball.reset();
-			break;
-		case 2:
-			player2++;
-			p2Text = TTF_RenderText_Solid(font, std::to_string(player2).c_str(), fontColor);
-			p2TextRect.x = (SCREEN_WIDTH * 0.75) - (p2Text->w * 0.5);
-			p2TextRect.w = p2Text->w;
-			p2Texture = SDL_CreateTextureFromSurface(renderer, p2Text);
-			ball.reset();
-			break;
+			SDL_RenderCopy(renderer, continuePromptTexture, NULL, &continuePromptRect);
+			
 		}
+		else
+		{
+			// update game entities
+			game.update(deltatime);
 
-		// draw lines
-		SDL_RenderFillRect(renderer, &horizontalLine);
-		SDL_RenderFillRect(renderer, &verticalLine);
+			// draw lines
+			SDL_RenderFillRect(renderer, &horizontalLine);
+			SDL_RenderFillRect(renderer, &verticalLine);
 
-		// print scores
-		// SDL_BlitSurface(p1Text, NULL, surface, &p1TextRect); //time to test?
-		// SDL_BlitSurface(p2Text, NULL, surface, &p2TextRect); // I think that works? yeah
-		// toot
-		// what now? :v
-		// can you send a screenshot?
-		// no
-		// only the update and draw stuff (and scores)
-		// yeah, game.update
-		// yep
-		// 
-
-		SDL_RenderCopy(renderer, p1Texture, NULL, &p1TextRect); //hmm, would that do it
-		SDL_RenderCopy(renderer, p2Texture, NULL, &p2TextRect); // think so
-		//it works kinda. when player 2 gets points, their score counter moves to where player 1s is
-		//okay, fixed it. It works
-		//I dunno.
-		//Will we call it like game.update or something?
-		//and that'll do all the draw calls and update calls?
-
-		// draw game entities
-		ball.drawBall(renderer);
-		paddle1.drawPaddle(renderer);
-		paddle2.drawPaddle(renderer);
-
+			game.draw();
+		}
+		
 		SDL_RenderPresent(renderer);
 
 		prevTime = std::chrono::high_resolution_clock::now();
 	}
+
+	// when closing program
 	close();
 	std::cout << "Closing\n";
 	return 0;

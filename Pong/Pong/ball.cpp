@@ -1,6 +1,9 @@
 #include "ball.h"
 
+Ball::Ball()
+{
 
+}
 Ball::Ball(SDL_Rect* paddle1, SDL_Rect* paddle2)
 {
 	reset();

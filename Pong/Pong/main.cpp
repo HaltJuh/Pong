@@ -35,7 +35,7 @@ bool init()
 		{
 			//Get window surface
 			surface = SDL_GetWindowSurface(window);
-			SDL_SetWindowTitle(window, "Pong: Beta 1");
+			SDL_SetWindowTitle(window, "Pong: Version 1.0");
 		}
 	}
 	return success;
@@ -78,10 +78,14 @@ int main(int argc, char* args[])
 	SDL_Rect horizontalLine{ 0, 49, SCREEN_WIDTH, 2 };
 	SDL_Rect verticalLine{ SCREEN_WIDTH * 0.5, 0, 2, SCREEN_HEIGHT };
 
-	SDL_Surface* continuePromptText = TTF_RenderText_Blended_Wrapped(font, ("Enter to play again.\nEscape to exit."), promptColor, 256);
-	SDL_Rect continuePromptRect{ (SCREEN_WIDTH - continuePromptText->w) / 2, (SCREEN_HEIGHT - continuePromptText->h) / 2, continuePromptText->w, continuePromptText->h };
-	SDL_Texture* continuePromptTexture = SDL_CreateTextureFromSurface(renderer, continuePromptText);
+	// create player won notifications and continue prompt
+	SDL_Surface* player1WonText = TTF_RenderText_Blended_Wrapped(font, "Player 1 won!\nEnter to play again.\nEscape to exit.", promptColor, 256);
+	SDL_Surface* player2WonText = TTF_RenderText_Blended_Wrapped(font, "Player 2 won!\nEnter to play again.\nEscape to exit.", promptColor, 256);
+	SDL_Rect playerWonRect{ (SCREEN_WIDTH - player2WonText->w) / 2, (SCREEN_HEIGHT - player2WonText->h) / 2, player2WonText->w, player2WonText->h };
+	SDL_Texture* player1WonTexture = SDL_CreateTextureFromSurface(renderer, player1WonText);
+	SDL_Texture* player2WonTexture = SDL_CreateTextureFromSurface(renderer, player2WonText);
 
+	// create game object and frame timer
 	Game game(font, renderer);
 	auto prevTime = std::chrono::high_resolution_clock::now();
 
@@ -130,17 +134,23 @@ int main(int argc, char* args[])
 		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 		if (gameOver)
 		{
-			SDL_RenderCopy(renderer, continuePromptTexture, NULL, &continuePromptRect);
+			if (game.getGameStatus() == 1)
+			{
+				SDL_RenderCopy(renderer, player1WonTexture, NULL, &playerWonRect);
+			}
+			else
+			{
+				SDL_RenderCopy(renderer, player2WonTexture, NULL, &playerWonRect);
+			}
 		}
 		else
 		{
-			// update game entities
-			game.update(deltatime);
-
 			// draw lines
 			SDL_RenderFillRect(renderer, &horizontalLine);
 			SDL_RenderFillRect(renderer, &verticalLine);
 
+			// update and draw game elements
+			game.update(deltatime);
 			game.draw();
 		}
 		

@@ -1,6 +1,5 @@
 #pragma once
 #include "constants.h"
-#include <SDL.h>
 #include <vector>
 #include <iostream>
 #include <algorithm>

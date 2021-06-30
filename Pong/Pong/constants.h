@@ -1,4 +1,13 @@
 #pragma once
-const int SCREEN_WIDTH = 960;
-const int SCREEN_HEIGHT = 590;
-const int HEIGHT_OFFSET = 50; // due to score area
+#include <SDL.h>
+
+constexpr int SCREEN_HEIGHT = 590;
+constexpr int SCREEN_WIDTH = 960;
+constexpr int HEIGHT_OFFSET = 50; // due to score area
+
+
+
+//we getting some errors now
+//I don't know
+//works now
+//okay

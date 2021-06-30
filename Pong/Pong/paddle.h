@@ -1,7 +1,6 @@
 #pragma once
 #include <vector>
 #include "constants.h"
-#include <SDL.h>
 
 class Paddle
 {

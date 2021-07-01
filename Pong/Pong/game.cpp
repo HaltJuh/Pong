@@ -47,11 +47,11 @@ void Game::onKeyRelease(SDL_Keycode key)
 /// 0: game continues, 1: player1 won, 2: player2 won
 int Game::getGameStatus()
 {
-	if (_scores[0] >= 10)
+	if (_scores[0] >= 1)
 	{
 		return 1;
 	}
-	if (_scores[1] >= 10)
+	if (_scores[1] >= 1)
 	{
 		return 2;
 	}

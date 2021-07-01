@@ -25,24 +25,21 @@ GameManager::GameManager()
 	SDL_SetWindowTitle(window, "Pong: Version 1.1");
 
 	player1WonText = newPrintableText(
-		"Player 1 won!Enter to play again.Escape to exit.",
+		"Player 1 won!\nEnter to play again.\nEscape to exit.",
 		SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 256
 	);
 
 	player2WonText = newPrintableText(
-		"Player 2 won!Enter to play again.Escape to exit.",
+		"Player 2 won!\nEnter to play again.\nEscape to exit.",
 		SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 256
 	);
 
 	for (int i = 0; i < 10; i++)
 	{
-		const char* str = std::to_string(i).c_str();
-		// nani
-		// did I mess up the optional param?
-		// ah, should be in the header
-		//I don't know, I rarely use em
-		scoreText[0][i] = newPrintableText(str, SCREEN_WIDTH / 4, 50);
-		scoreText[1][i] = newPrintableText(str, SCREEN_WIDTH * (3 / 4), 50);
+		std::string str = std::to_string(i);
+		//const char* str = std::to_string(i).c_str();
+		scoreText[0][i] = newPrintableText(str.c_str(), SCREEN_WIDTH / 4, 25);
+		scoreText[1][i] = newPrintableText(str.c_str(), SCREEN_WIDTH * 3 / 4, 25);
 	}
 }
 
@@ -65,17 +62,8 @@ GameManager::~GameManager()
 PrintableText GameManager::newPrintableText(const char* str, int x, int y, int wrap)
 { // what happened?
 
-	if (wrap == 0)
-	{
+	SDL_Surface* surface = wrap ? TTF_RenderText_Blended_Wrapped(font, str, fontColor, wrap):
 		TTF_RenderText_Solid(font, str, fontColor);
-	}
-	else
-	{
-		TTF_RenderText_Blended_Wrapped(font, str, fontColor, wrap);
-	}
-
-	//SDL_Surface* surface = (wrap > 0) ? TTF_RenderText_Blended_Wrapped(font, str, fontColor, wrap):
-		//TTF_RenderText_Solid(font, str, fontColor);
 	PrintableText text {
 		SDL_CreateTextureFromSurface(renderer, surface),
 		{ x - surface->w / 2, y - surface->h / 2, surface->w, surface->h }
